@@ -9,8 +9,8 @@ var asteroidGroup;
 var gameState = "Start";
 var p1Score = 0;
 var p2Score = 0;
-var enemyLife = 5;
-var playerLife = 5;
+var enemyLife = 10;
+var playerLife = 10;
 
 
 function preload(){
@@ -84,24 +84,51 @@ function draw() {
       laser.visible = true;
     }
 
-    if(asteroidGroup.isTouching(bullet) || asteroidGroup.isTouching(laser) ){
+    if(asteroidGroup.isTouching(bullet)){
       asteroidGroup.destroyEach();
       bullet.visible = false;
+      gameState = "end";
+    }
+    else if(asteroidGroup.isTouching(laser) ){
+      asteroidGroup.destroyEach();
       laser.visible = false;
-      p1Score = p1Score - 1;
-      p2Score = p2Score - 1;
+      gameState = "end";
     }
 
     if(bullet.isTouching(enemySpaceShip)){
       bullet.visible = false;
       
       p1Score = p1Score + 5;
-      enemyLife = enemyLife - 1;
+      //enemyLife = enemyLife - 0.5;
     }
+    if(laser.isTouching(spaceShip)){
+      laser.visible = false;
 
+      p2Score = p2Score + 5;
+      //playerLife = playerLife - 0.5;
+    }
+    if(p1Score === 500 || p2Score === 500){
+      gameState = "end";
+    }
     textSize(25);
     fill("white");
     text("Player Score: " + p1Score,100,100);
+    text("Enemy Score: " + p2Score,900,100);
+
+  }
+
+  else{
+    spaceShip.visible = false;
+    enemySpaceShip.visible = false;
+    asteroidGroup.destroyEach();
+
+    fill("red");
+    textSize(40);
+    text("GAME OVER !!!",500,300);
+    text("Press 'R' to Restart!!!",450,400);
+  }
+  if(gameState === "end" && keyDown("r")){
+    restart();
   }
   drawSprites();
 }
@@ -164,4 +191,12 @@ function moveEnemy(){
   if(keyDown(RIGHT_ARROW)){
     enemySpaceShip.x = enemySpaceShip.x + 5;
   }
+}
+
+function restart(){
+  gameState = "Start";
+  p1Score = 0;
+  p2Score = 0;
+  spaceShip.visible = false;
+  enemySpaceShip.visible = false;
 }
